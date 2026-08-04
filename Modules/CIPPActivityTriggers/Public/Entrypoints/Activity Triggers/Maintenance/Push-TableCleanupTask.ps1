@@ -59,7 +59,11 @@ function Push-TableCleanupTask {
                         $CleanupCompleted = $true
                     }
                 } catch {
+                    # A failed fetch previously went only to Write-Warning, which is not persisted,
+                    # so a rule that never retrieved a single row still reported success. Log it the
+                    # same way a failed removal is logged so the failure is visible in CippLogs.
                     Write-Warning "Failed to fetch entities from $($Item.TableName): $($_.Exception.Message)"
+                    Write-LogMessage -API 'TableCleanup' -message "Failed to fetch entities from $($Item.TableName)" -sev Error -LogData (Get-CippException -Exception $_)
                     $CleanupCompleted = $true
                 }
             } while (!$CleanupCompleted)

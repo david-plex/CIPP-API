@@ -50,14 +50,19 @@ function Start-LogRetentionCleanup {
         $CutoffDate = (Get-Date).AddDays(-$RetentionDays).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
 
         $TotalDeletedCount = 0
-        $BatchSize = 5000
+        # Azure Table Storage caps $top at 1000. Requesting more makes the service reject the
+        # query outright with 400 InvalidInput ("One of the request inputs is not valid"), so
+        # the previous value of 5000 meant this cleanup failed on its very first fetch and no
+        # log has ever been deleted. The loop below already pages, so a smaller batch only
+        # costs additional iterations.
+        $BatchSize = 1000
 
         # Clean up CIPP Logs
         if ($PSCmdlet.ShouldProcess('CippLogs', 'Cleaning up old logs')) {
             $CippLogsTable = Get-CippTable -tablename 'CippLogs'
             $CutoffFilter = "Timestamp lt datetime'$CutoffDate'"
 
-            # Process deletions in batches of 10k to avoid timeout
+            # Process deletions in pages to avoid timeout
             $HasMoreRecords = $true
             $BatchNumber = 0
 
@@ -65,7 +70,7 @@ function Start-LogRetentionCleanup {
                 $BatchNumber++
                 Write-Host "Processing batch $BatchNumber..."
 
-                # Fetch up to 10k old log entries
+                # Fetch one page of old log entries
                 $OldLogs = Get-AzDataTableEntity @CippLogsTable -Filter $CutoffFilter -Property @('PartitionKey', 'RowKey') -First $BatchSize
 
                 if ($OldLogs -and ($OldLogs | Measure-Object).Count -gt 0) {

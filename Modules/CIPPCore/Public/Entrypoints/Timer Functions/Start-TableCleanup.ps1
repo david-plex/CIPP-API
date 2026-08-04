@@ -22,7 +22,7 @@ function Start-TableCleanup {
             TableName      = 'CippReportingDB'
             DataTableProps = @{
                 Filter   = "Timestamp lt datetime'$((Get-Date).AddDays(-30).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ'))'"
-                First    = 10000
+                First    = 1000
                 Property = @('PartitionKey', 'RowKey', 'ETag')
             }
         }
@@ -32,7 +32,7 @@ function Start-TableCleanup {
             TableName      = 'AuditLogSearches'
             DataTableProps = @{
                 Filter   = "PartitionKey eq 'Search' and Timestamp lt datetime'$((Get-Date).AddHours(-12).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ'))'"
-                First    = 10000
+                First    = 1000
                 Property = @('PartitionKey', 'RowKey', 'ETag')
             }
         }
@@ -42,7 +42,7 @@ function Start-TableCleanup {
             TableName      = 'CippFunctionStats'
             DataTableProps = @{
                 Filter   = "PartitionKey eq 'Durable' and Timestamp lt datetime'$((Get-Date).AddDays(-7).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ'))'"
-                First    = 10000
+                First    = 1000
                 Property = @('PartitionKey', 'RowKey', 'ETag')
             }
         }
@@ -52,7 +52,7 @@ function Start-TableCleanup {
             TableName      = 'CippQueue'
             DataTableProps = @{
                 Filter   = "PartitionKey eq 'CippQueue' and Timestamp lt datetime'$((Get-Date).AddDays(-7).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ'))'"
-                First    = 10000
+                First    = 1000
                 Property = @('PartitionKey', 'RowKey', 'ETag')
             }
         }
@@ -62,7 +62,7 @@ function Start-TableCleanup {
             TableName      = 'CippQueueTasks'
             DataTableProps = @{
                 Filter   = "PartitionKey eq 'Task' and Timestamp lt datetime'$((Get-Date).AddDays(-7).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ'))'"
-                First    = 10000
+                First    = 1000
                 Property = @('PartitionKey', 'RowKey', 'ETag')
             }
         }
@@ -81,7 +81,7 @@ function Start-TableCleanup {
             TableName      = 'CippStandardsReports'
             DataTableProps = @{
                 Filter   = "Timestamp lt datetime'$((Get-Date).AddDays(-7).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ'))'"
-                First    = 10000
+                First    = 1000
                 Property = @('PartitionKey', 'RowKey', 'ETag')
             }
         }
@@ -91,7 +91,7 @@ function Start-TableCleanup {
             TableName      = 'cacheQuarantineMessages'
             DataTableProps = @{
                 Filter   = "PartitionKey eq 'QuarantineMessage' and Timestamp lt datetime'$((Get-Date).AddDays(-1).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ'))'"
-                First    = 10000
+                First    = 1000
                 Property = @('PartitionKey', 'RowKey', 'ETag')
             }
         }
@@ -101,7 +101,7 @@ function Start-TableCleanup {
             TableName      = 'CippOrchestratorBatch'
             DataTableProps = @{
                 Filter   = "Timestamp lt datetime'$((Get-Date).AddHours(-24).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ'))'"
-                First    = 10000
+                First    = 1000
                 Property = @('PartitionKey', 'RowKey', 'ETag')
             }
         }
@@ -111,7 +111,7 @@ function Start-TableCleanup {
             TableName      = 'knownlocationdbv2'
             DataTableProps = @{
                 Filter   = "PartitionKey eq 'ip' and Timestamp lt datetime'$((Get-Date).AddDays(-90).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ'))'"
-                First    = 10000
+                First    = 1000
                 Property = @('PartitionKey', 'RowKey', 'ETag')
             }
         }
