@@ -1442,7 +1442,16 @@ function Invoke-NinjaOneTenantSync {
                 '</div><div class="col-xl-6 col-lg-6 col-md-12 col-sm-12 d-flex">' + $LicenseItemsCardHTML +
                 '</div></div>'
 
-                $NinjaOneLicense = $NinjaOneLicenseDocs | Where-Object { $_.ParsedFields.cippLicenseID -eq $License.ID }
+                # Match on skuId, not id. Get-CippExtensionReportingData projects the license
+                # objects through a Select-Object that does not carry an 'id' property, so
+                # $License.ID is always $null and this lookup never matched an existing document.
+                # Every license then took the create path and NinjaOne rejected the batch because
+                # the document already existed. The second clause matches documents written by
+                # older versions, which stored the Graph subscribedSkus id ('<tenantId>_<skuId>').
+                $NinjaOneLicense = $NinjaOneLicenseDocs | Where-Object {
+                    $_.ParsedFields.cippLicenseID -eq $License.skuId -or
+                    $_.ParsedFields.cippLicenseID -like "*_$($License.skuId)"
+                }
 
                 $LicenseFields = @{
                     cippLicenseSummary = @{'html' = $LicenseSummaryHTML }
