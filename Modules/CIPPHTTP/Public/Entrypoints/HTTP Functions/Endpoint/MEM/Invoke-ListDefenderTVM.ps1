@@ -9,6 +9,7 @@ function Invoke-ListDefenderTVM {
     #>
     [CmdletBinding()]
     param($Request, $TriggerMetadata)
+    $APIName = $Request.Params.CIPPEndpoint
     $TenantFilter = $Request.Query.tenantFilter
     # Interact with query parameters or the body of the request.
     try {
@@ -43,6 +44,11 @@ function Invoke-ListDefenderTVM {
         $ErrorMessage = Get-NormalizedError -Message $_.Exception.Message
         $StatusCode = [HttpStatusCode]::Forbidden
         $GroupObj = $ErrorMessage
+        # The reason for the failure was previously returned only in the response body, which the
+        # data table discards in favour of a generic message. Persist it so the tenant and the
+        # underlying error (missing Defender licence, absent consent for the Security Center
+        # scope) can be identified without capturing the response by hand.
+        Write-LogMessage -API $APIName -headers $Request.Headers -tenant $TenantFilter -message "Failed to list Defender TVM vulnerabilities: $ErrorMessage" -Sev 'Error' -LogData (Get-CippException -Exception $_)
     }
 
     return ([HttpResponseContext]@{
