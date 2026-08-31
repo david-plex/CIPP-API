@@ -124,7 +124,7 @@ function Start-TableCleanup {
             TableName      = 'BaselineHistory'
             DataTableProps = @{
                 Filter   = "Timestamp lt datetime'$((Get-Date).AddDays(-90).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ'))'"
-                First    = 10000
+                First    = 1000
                 Property = @('PartitionKey', 'RowKey', 'ETag')
             }
         }
